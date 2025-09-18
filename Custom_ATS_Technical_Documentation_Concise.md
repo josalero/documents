@@ -45,14 +45,7 @@
    - 1.2. [Brief Overview of the Custom ATS](#12-brief-overview-of-the-custom-ats)
    - 1.3. [Context of the ATS Market](#13-context-of-the-ats-market)
 2. [Competitor Overview](#2-competitor-overview)
-   - 2.1. [JazzHR](#21-jazzhr)
-   - 2.2. [BambooHR](#22-bamboohr)
-   - 2.3. [Manatal](#23-manatal)
-   - 2.4. [Zoho Recruit](#24-zoho-recruit)
-   - 2.5. [Rippling](#25-rippling)
-   - 2.6. [Workable](#26-workable)
-   - 2.7. [Pricing Comparison & Analysis](#27-pricing-comparison--analysis)
-   - 2.8. [Value Proposition Analysis](#28-value-proposition-analysis)
+   - 2.1. [Pricing Comparison & Analysis](#21-pricing-comparison--analysis)
 3. [Our Custom ATS](#3-our-custom-ats)
    - 3.1. [System Overview](#31-system-overview)
    - 3.2. [In-Scope Features](#32-in-scope-features)
@@ -63,6 +56,7 @@
    - 4.2. [End-to-End Workflows Summary](#42-end-to-end-workflows-summary)
 5. [Not Covered Scenarios](#5-not-covered-scenarios)
    - 5.1. [Current ATS Limitations](#51-current-ats-limitations)
+   - 5.2. [Competitive Positioning Summary](#52-competitive-positioning-summary)
 6. [ATS Platform Comparison](#6-ats-platform-comparison)
    - 6.1. [Comprehensive Feature Comparison Matrix](#61-comprehensive-feature-comparison-matrix)
    - 6.2. [Competitive Positioning Summary](#62-competitive-positioning-summary)
@@ -88,67 +82,16 @@ The Applicant Tracking System market is highly competitive, with established mid
 
 ## 2. Competitor Overview
 
-### 2.1 JazzHR
+| Platform | Founded | Target Market | Key Strengths | Notable Features | Weaknesses |
+|----------|---------|---------------|---------------|------------------|------------|
+| **JazzHR** | 2009 | Mid-market (10-500 employees) | User-friendly interface, Advanced reporting, Workflow automation | Custom report builder, Extensive integrations, Strong customer support | Limited AI features, Higher cost, Basic automation |
+| **BambooHR** | 2008 | Small to mid-market (1-1000 employees) | Complete HR suite, Compliance features, Employee self-service | All-in-one HR solution, EEO reporting, Benefits administration | Limited ATS features, Higher cost, Limited customization |
+| **Manatal** | 2018 | Small to mid-market (1-500 employees) | AI-powered features, Social media integration, Affordable pricing | AI candidate recommendations, LinkedIn integration, Smart matching | Limited customization, Smaller ecosystem, Basic reporting |
+| **Zoho Recruit** | 1996 | Small to mid-market (1-1000 employees) | Complete CRM integration, Advanced automation, Affordable pricing | Zoho CRM integration, Advanced workflow automation, Custom fields | Limited AI features, Complex setup, Basic reporting |
+| **Rippling** | 2016 | Mid-market to enterprise (50-5000+ employees) | All-in-one HR platform, Advanced automation, Modern interface | Complete HR suite, Advanced workflow automation, Global compliance | Higher cost, Complex for small teams, Limited ATS focus |
+| **Workable** | 2012 | Small to enterprise (1-1000+ employees) | Comprehensive recruiting suite, HR integration, User-friendly interface | Candidate sourcing, Unlimited active jobs, HR information system, Employee onboarding | Higher cost, Complex pricing structure, Limited customization |
 
-| Aspect | Details |
-|--------|---------|
-| **Company** | JazzHR (founded 2009) |
-| **Target Market** | Mid-market companies (10-500 employees) |
-| **Key Strengths** | User-friendly interface, Advanced reporting, Workflow automation |
-| **Notable Features** | Custom report builder, Extensive integrations, Strong customer support |
-| **Weaknesses** | Limited AI features, Higher cost, Basic automation |
-
-### 2.2 BambooHR
-
-| Aspect | Details |
-|--------|---------|
-| **Company** | BambooHR (founded 2008) |
-| **Target Market** | Small to mid-market companies (1-1000 employees) |
-| **Key Strengths** | Complete HR suite, Compliance features, Employee self-service |
-| **Notable Features** | All-in-one HR solution, EEO reporting, Benefits administration |
-| **Weaknesses** | Limited ATS features, Higher cost, Limited customization |
-
-### 2.3 Manatal
-
-| Aspect | Details |
-|--------|---------|
-| **Company** | Manatal (founded 2018) |
-| **Target Market** | Small to mid-market companies (1-500 employees) |
-| **Key Strengths** | AI-powered features, Social media integration, Affordable pricing |
-| **Notable Features** | AI candidate recommendations, LinkedIn integration, Smart matching |
-| **Weaknesses** | Limited customization, Smaller ecosystem, Basic reporting |
-
-### 2.4 Zoho Recruit
-
-| Aspect | Details |
-|--------|---------|
-| **Company** | Zoho Recruit (part of Zoho Corporation, founded 1996) |
-| **Target Market** | Small to mid-market companies (1-1000 employees) |
-| **Key Strengths** | Complete CRM integration, Advanced automation, Affordable pricing |
-| **Notable Features** | Zoho CRM integration, Advanced workflow automation, Custom fields |
-| **Weaknesses** | Limited AI features, Complex setup, Basic reporting |
-
-### 2.5 Rippling
-
-| Aspect | Details |
-|--------|---------|
-| **Company** | Rippling (founded 2016) |
-| **Target Market** | Mid-market to enterprise companies (50-5000+ employees) |
-| **Key Strengths** | All-in-one HR platform, Advanced automation, Modern interface |
-| **Notable Features** | Complete HR suite, Advanced workflow automation, Global compliance |
-| **Weaknesses** | Higher cost, Complex for small teams, Limited ATS focus |
-
-### 2.6 Workable
-
-| Aspect | Details |
-|--------|---------|
-| **Company** | Workable (founded 2012) |
-| **Target Market** | Small to enterprise companies (1-1000+ employees) |
-| **Key Strengths** | Comprehensive recruiting suite, HR integration, User-friendly interface |
-| **Notable Features** | Candidate sourcing, Unlimited active jobs, HR information system, Employee onboarding |
-| **Weaknesses** | Higher cost, Complex pricing structure, Limited customization |
-
-### 2.7 Pricing Comparison & Analysis
+### 2.1 Pricing Comparison & Analysis
 
 | Platform | Plan | Price | Key Features | Target Users | Pricing Model | Free Trial | User Ratings |
 |----------|------|-------|--------------|--------------|---------------|------------|--------------|
@@ -174,44 +117,6 @@ The Applicant Tracking System market is highly competitive, with established mid
 | | Premier | $599/month (1-20 employees) | All features + Premium tools | Growing companies | | | |
 | | Custom | Contact | Enterprise features | Large organizations | | | |
 | **Our Custom ATS** | Custom | TBD | AI integration, Multi-channel | Mid-market | Custom | TBD | TBD |
-
-### 2.8 Value Proposition Analysis
-
-| Platform | Key Strengths | Best For | Competitive Advantage |
-|----------|---------------|----------|----------------------|
-| **JazzHR** | User-friendly interface, Advanced reporting, Workflow automation | Mid-market companies needing comprehensive reporting | Job-focused approach, Strong automation |
-| **BambooHR** | Complete HR suite, Compliance features, Employee self-service | Companies needing integrated HR and recruiting | All-in-one solution, Strong compliance |
-| **Manatal** | AI-powered features, Social media integration, Affordable pricing | Companies focused on AI-powered recruiting | AI-first approach, Social integration |
-| **Zoho Recruit** | CRM integration, Advanced automation, Affordable pricing | Companies using Zoho ecosystem | Complete CRM integration, Advanced workflows |
-| **Rippling** | All-in-one HR platform, Advanced automation, Modern interface | Mid-market to enterprise companies | Complete HR suite, Advanced automation |
-| **Workable** | Comprehensive recruiting suite, HR integration, User-friendly interface | Small to enterprise companies | Complete recruiting + HR solution, Unlimited jobs |
-| **Our Custom ATS** | AI integration, Multi-channel distribution, Cost efficiency | Mid-market companies seeking AI-powered solutions | Unique multi-channel, Superior AI, Cost advantage |
-
-**Pricing Notes:**
-- **BambooHR:** Pricing varies by company size; flat rate for <25 employees, per-employee for 25+ employees
-- **Zoho Recruit:** All prices are billed annually; add-ons available (Client Portal: $6/month, Video Interviews: $12/month)
-- **Rippling:** Custom pricing based on selected modules; modular approach with HR, IT, and Finance products
-- **Workable:** Pricing scales with company size; 20% discount for annual billing; Premium tools available as add-ons
-- **Volume discounts** available for larger organizations
-- **15% discount** for registered nonprofit organizations (BambooHR)
-- **Add-ons:** Payroll, Benefits Administration, Time Tracking available for additional cost
-
-**User Ratings Sources:**
-- **JazzHR:** 4.4/5 on G2 (426+ reviews) - https://www.g2.com/products/jazzhr/reviews
-- **BambooHR:** 4.6/5 on G2 (3,074+ reviews) - https://www.g2.com/products/bamboohr/reviews
-- **Manatal:** 4.6/5 on G2 (138+ reviews) - https://www.g2.com/products/manatal/reviews
-- **Zoho Recruit:** 4.2/5 on G2 (89+ reviews) - https://www.g2.com/products/zoho-recruit/reviews
-- **Rippling:** 4.8/5 on G2 (1,247+ reviews) - https://www.g2.com/products/rippling/reviews
-- **Workable:** 4.5/5 on G2 (1,847+ reviews) - https://www.g2.com/products/workable/reviews
-- **Our Custom ATS:** TBD (New platform, no public ratings yet)
-
-**Pricing Information:**
-- **JazzHR:** https://www.jazzhr.com/pricing/
-- **BambooHR:** https://www.bamboohr.com/pricing/
-- **Manatal:** https://www.manatal.com/pricing/
-- **Zoho Recruit:** https://www.zoho.com/recruit/pricing/
-- **Rippling:** https://www.rippling.com/pricing/
-- **Workable:** https://www.workable.com/pricing/
 
 ---
 
@@ -313,6 +218,157 @@ The Applicant Tracking System market is highly competitive, with established mid
 | **HR Suite Features** | ❌ Not included | Requires separate HR system | Low | • Add employee onboarding workflows<br>• Implement performance management modules<br>• Create time tracking and attendance features<br>• Add benefits administration capabilities |
 | **White-Label Solutions** | ❌ Not available | Limited customization for clients | Low | • Implement customizable branding options<br>• Add client-specific domain support<br>• Create white-label mobile applications<br>• Add custom theme and styling capabilities |
 | **Global Deployment** | ❌ Single region only | Limited international scalability | Low | • Deploy multi-region infrastructure<br>• Implement data residency compliance<br>• Add multi-language support<br>• Create region-specific compliance features |
+
+---
+
+## 5.2 Competitive Positioning Summary
+
+### Where Our Custom ATS Fits in the Market
+
+Our Custom ATS occupies a **unique position** in the competitive landscape, combining the best of multiple approaches while offering distinctive advantages:
+
+#### **🏆 Our Competitive Advantages**
+- **AI-Powered Features**: Superior to JazzHR, BambooHR, Zoho Recruit, Rippling, and Workable
+- **Multi-Channel Distribution**: Unique in the market (Telegram/WhatsApp integration)
+- **Cost Efficiency**: Significantly lower TCO compared to all competitors
+- **Customization**: Higher than BambooHR, Rippling, and Workable
+- **Modern Technology**: Latest Java 24 and Spring Boot 3.5.5
+
+#### **📊 Market Position Analysis**
+
+| **Aspect** | **Our ATS** | **Closest Competitors** | **Gap** |
+|------------|-------------|------------------------|---------|
+| **AI Integration** | ✅ **Leader** | Manatal (AI-focused) | We have superior AI with multi-channel |
+| **Cost Efficiency** | ✅ **Leader** | Manatal, Zoho Recruit | We offer best value proposition |
+| **Multi-Channel** | ✅ **Unique** | None | We're the only one with Telegram/WhatsApp |
+| **Reporting** | ⚠️ **Behind** | JazzHR, Workable | Need to catch up on advanced reporting |
+| **Process Automation** | ⚠️ **Behind** | JazzHR, Rippling, Workable | Need visual process designer |
+| **HR Suite** | ⚠️ **Behind** | BambooHR, Rippling, Workable | Not our focus area |
+
+#### **🎯 Target Market Sweet Spot**
+Our ATS is **perfectly positioned** for:
+- **Mid-market companies (100-1000 employees)** seeking AI-powered recruitment
+- **Companies prioritizing cost efficiency** over extensive HR suite features
+- **Organizations needing multi-channel job distribution** (unique advantage)
+- **Businesses wanting modern, customizable solutions** with AI capabilities
+
+#### **⚖️ Competitive Balance**
+- **Strengths**: AI, Multi-channel, Cost, Customization, Modern tech
+- **Areas for Improvement**: Advanced reporting, Process automation, Enterprise security features
+- **Unique Value**: Only ATS with comprehensive AI + multi-channel distribution
+
+#### **🚀 Strategic Positioning**
+We're positioned as the **"AI-Powered, Multi-Channel ATS"** - a modern, cost-effective alternative to traditional ATS platforms, with unique capabilities that no competitor offers.
+
+### **💰 Recommended Pricing Strategy**
+
+#### **Pricing Model: Job-Based (Recommended)**
+**Why Job-Based is Superior for Our ATS:**
+
+| **Aspect** | **Job-Based Model** | **User-Based Model** | **Our Advantage** |
+|------------|-------------------|-------------------|------------------|
+| **Value Alignment** | ✅ Directly tied to business value | ❌ May not reflect actual usage | Jobs = revenue generation |
+| **Scalability** | ✅ Grows with business success | ⚠️ Can limit team collaboration | Encourages growth |
+| **Competitive Position** | ✅ Undercuts user-based competitors | ❌ Matches expensive competitors | 60-80% cost savings |
+| **AI Value Proposition** | ✅ AI per job = clear ROI | ❌ AI per user = unclear value | Clear AI benefits per job |
+| **Multi-Channel Value** | ✅ Channels per job = clear benefit | ❌ Channels per user = unclear | Clear distribution value |
+
+#### **Recommended Pricing Tiers**
+
+| **Tier** | **Jobs/Month** | **Price** | **Target Market** | **Value Proposition** |
+|----------|----------------|-----------|-------------------|----------------------|
+| **Starter** | 5 active jobs | $49/month | Small businesses (1-50 employees) | 70% cheaper than JazzHR |
+| **Professional** | 25 active jobs | $149/month | Mid-market (50-200 employees) | 60% cheaper than Workable |
+| **Enterprise** | 100 active jobs | $399/month | Large companies (200+ employees) | 50% cheaper than Rippling |
+| **Unlimited** | Unlimited jobs | $799/month | High-volume recruiters | Best value for heavy users |
+
+#### **Key Pricing Advantages**
+- **60-80% cost savings** compared to user-based competitors
+- **No user limits** - encourages team collaboration
+- **Clear ROI** - price directly tied to business value (jobs)
+- **Scalable** - grows with client success
+- **AI value** - AI features per job, not per user
+
+#### **Competitive Pricing Comparison**
+
+| **Platform** | **Model** | **5 Jobs** | **25 Jobs** | **100 Jobs** |
+|--------------|-----------|------------|-------------|--------------|
+| **Our ATS** | Job-based | $49 | $149 | $399 |
+| **JazzHR** | Job-based | $75 | $269 | $1,000+ |
+| **Workable** | User-based | $299 | $599 | $1,199+ |
+| **Rippling** | User-based | $400+ | $800+ | $1,600+ |
+| **Savings** | | 35-87% | 44-75% | 60-75% |
+
+#### **Strategic Benefits of Job-Based Pricing**
+1. **Market Disruption**: Undercut all major competitors by 50-80%
+2. **Value Clarity**: Clients understand "price per job" better than "price per user"
+3. **Growth Incentive**: Clients pay more as they succeed (more jobs = more revenue)
+4. **AI Differentiation**: AI value is clear per job, not per user
+5. **Multi-Channel Value**: Distribution value is obvious per job posted
+
+### **🔄 Alternative Pricing Strategy: User + Candidate-Based**
+
+#### **Hybrid Model: Users + Candidates (Alternative Option)**
+**When to Consider This Model:**
+- Clients with large teams but few jobs
+- High-volume candidate processing needs
+- Enterprise clients with complex workflows
+
+| **Aspect** | **User + Candidate Model** | **Job-Based Model** | **Best For** |
+|------------|---------------------------|-------------------|--------------|
+| **Team Size** | ✅ Scales with team growth | ❌ No team size consideration | Large teams |
+| **Candidate Volume** | ✅ Directly tied to processing | ⚠️ Indirect relationship | High candidate volume |
+| **Predictability** | ⚠️ Can be unpredictable | ✅ Very predictable | Budget planning |
+| **Competitive Position** | ⚠️ Matches some competitors | ✅ Undercuts all competitors | Market disruption |
+
+#### **User + Candidate Pricing Tiers**
+
+| **Tier** | **Users** | **Candidates/Month** | **Price** | **Target Market** | **Value Proposition** |
+|----------|-----------|---------------------|-----------|-------------------|----------------------|
+| **Team** | 5 users | 500 candidates | $99/month | Small teams (5-20 people) | 50% cheaper than Workable |
+| **Professional** | 15 users | 2,000 candidates | $249/month | Mid-market (20-100 people) | 60% cheaper than Rippling |
+| **Enterprise** | 50 users | 10,000 candidates | $599/month | Large companies (100+ people) | 40% cheaper than Workable |
+| **Unlimited** | Unlimited users | Unlimited candidates | $1,199/month | High-volume enterprises | Best value for large teams |
+
+#### **Candidate-Based Pricing Logic**
+- **AI Processing**: AI analyzes each candidate - clear value per candidate
+- **Multi-Channel**: Each candidate can be distributed across channels
+- **Scalability**: Grows with recruitment volume
+- **Fair Pricing**: Pay for what you process
+
+#### **Competitive Comparison: User + Candidate Model**
+
+| **Platform** | **5 Users + 500 Candidates** | **15 Users + 2K Candidates** | **50 Users + 10K Candidates** |
+|--------------|------------------------------|------------------------------|-------------------------------|
+| **Our ATS** | $99/month | $249/month | $599/month |
+| **Workable** | $299/month | $599/month | $1,199/month |
+| **Rippling** | $400+/month | $800+/month | $1,600+/month |
+| **BambooHR** | $300+/month | $600+/month | $1,200+/month |
+| **Savings** | 67-75% | 58-69% | 50-63% |
+
+#### **When to Use Each Model**
+
+| **Scenario** | **Recommended Model** | **Reasoning** |
+|--------------|----------------------|---------------|
+| **Job-focused clients** | Job-based | Clear ROI per job posted |
+| **High-volume teams** | User + Candidate | Scales with team and processing |
+| **Startups/SMBs** | Job-based | Lower barrier to entry |
+| **Enterprise clients** | User + Candidate | Matches enterprise expectations |
+| **AI-heavy usage** | User + Candidate | AI value per candidate processed |
+| **Multi-channel heavy** | Job-based | Distribution value per job |
+
+#### **Flexible Pricing Options**
+**Option 1: Pure Job-Based** (Recommended)
+- Best for: Most clients, clear value proposition
+- Pricing: $49-$799/month based on jobs
+
+**Option 2: Pure User + Candidate**
+- Best for: Large teams, high candidate volume
+- Pricing: $99-$1,199/month based on users + candidates
+
+**Option 3: Hybrid Approach**
+- Best for: Custom enterprise deals
+- Pricing: Mix of both models based on client needs
 
 ---
 
