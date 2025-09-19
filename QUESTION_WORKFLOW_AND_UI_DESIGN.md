@@ -3,8 +3,8 @@
 ## Table of Contents
 1. [Question Workflow Deep Dive](#question-workflow-deep-dive)
 2. [Backend Architecture](#backend-architecture)
-3. [UI/UX Design Recommendations](#uiux-design-recommendations)
-4. [React Component Mockups](#react-component-mockups)
+3. [React Component Mockups](#react-component-mockups)
+4. [Question System Workflow](#question-system-workflow)
 5. [API Endpoints Documentation](#api-endpoints-documentation)
 6. [Implementation Guidelines](#implementation-guidelines)
 
@@ -23,129 +23,54 @@ The following diagram shows the complete database schema for the question system
 erDiagram
     COMPANY {
         UUID id PK
-        String name
-        boolean active
-        String createdBy
-        LocalDateTime createdDate
     }
     
     QUESTION {
         UUID id PK
-        String questionText
-        boolean required
-        boolean active
-        QuestionType questionType
         UUID companyId FK
-        String createdBy
-        LocalDateTime createdDate
     }
     
     QUESTION_OPTION {
         UUID id PK
-        String optionText
-        int orderIndex
         UUID questionId FK
-        String createdBy
-        LocalDateTime createdDate
     }
     
     JOB {
         UUID id PK
-        String name
-        String description
-        String category
-        String subCategory
-        String location
-        BigDecimal minSalary
-        BigDecimal maxSalary
-        String currency
-        boolean published
-        boolean closed
-        boolean deleted
-        boolean featured
-        boolean draft
         UUID clientId FK
         UUID ownerId FK
-        String createdBy
-        LocalDateTime createdDate
-        LocalDateTime postedDate
     }
     
     JOB_QUESTION {
         UUID id PK
         UUID jobId FK
         UUID questionId FK
-        int orderIndex
-        String createdBy
-        LocalDateTime createdDate
     }
     
     JOB_APPLICATION {
         UUID id PK
-        String firstname
-        String lastname
-        String fullname
-        String email
-        String phoneNumber
-        String websiteURL
-        BigDecimal expectedSalary
-        String currency
-        boolean emailNotifiable
-        boolean whatsappNotifiable
-        double relevance
-        boolean visible
-        boolean deleted
-        boolean closed
-        int rate
-        UUID candidateId
         UUID jobId FK
         UUID fileId FK
-        String ownerFullname
-        String createdBy
-        LocalDateTime createdDate
     }
     
     QUESTION_ANSWER {
         UUID id PK
         UUID jobApplicationId FK
         UUID questionId FK
-        String answerText
-        String selectedOptionIds
-        String createdBy
-        LocalDateTime createdDate
     }
     
     CLIENT {
         UUID id PK
-        String name
-        String description
-        boolean active
         UUID companyId FK
-        String createdBy
-        LocalDateTime createdDate
     }
     
     USER {
         UUID id PK
-        String username
-        String email
-        String firstname
-        String lastname
         UUID companyEntityId FK
-        boolean enabled
-        boolean deleted
-        String createdBy
-        LocalDateTime createdDate
     }
     
     FILE {
         UUID id PK
-        String name
-        String contentType
-        byte[] contentBytes
-        FileType fileType
-        String createdBy
-        LocalDateTime createdDate
     }
 
     %% Relationships
@@ -190,149 +115,221 @@ erDiagram
 4. **JobApplication → Answers**: When candidates apply, their answers are stored in QuestionAnswer entities
 5. **Order Management**: Both JobQuestion and QuestionOption have orderIndex fields to control display order
 
-### Complete Workflow Process
+### Question System Workflow
 
-#### Phase 1: Question Management (Company Admin)
-```java
-@Entity
-public class QuestionOption {
-    private UUID id;
-    private String optionText;          // The option text
-    private int orderIndex;             // Display order within the question
-    private Question question;          // Parent question
-}
+The question system follows a three-step workflow that allows companies to create custom questionnaires for job applications:
 
-#### 4. Job-Question Assignment
-```java
-@Entity
-public class JobQuestion {
-    private UUID id;
-    private Job job;                    // The job posting
-    private Question question;          // The assigned question
-    private int orderIndex;             // Order within the job
-}
+#### 1. Create Questions Database per Company
+
+Company administrators can create a library of questions that can be reused across multiple job postings:
+
+- **Question Types**: Support for different question types (STRING, NUMBER, MULTIPLE_SELECTION, UNIQUE_SELECTION)
+- **Question Management**: Create, edit, activate/deactivate questions
+- **Question Options**: For choice-based questions, define multiple answer options
+- **Company Scope**: All questions are scoped to the company, ensuring data isolation
+
+**Key Features:**
+- Question bank management with search and filtering
+- Reusable question templates
+- Question categorization and organization
+- Bulk operations for efficiency
+
+#### 2. Create a Job and Choose Questions
+
+When creating a job posting, administrators can select which questions from the company's question bank should be included:
+
+- **Question Selection**: Choose from available company questions
+- **Question Ordering**: Define the order in which questions appear to candidates
+- **Job-Specific Configuration**: Each job can have a different set of questions
+- **Preview Mode**: See how questions will appear to candidates before publishing
+
+**Key Features:**
+- Drag-and-drop question ordering
+- Question preview functionality
+- Flexible question assignment per job
+- Template-based job creation
+
+#### 3. Candidate Application with Question Answers
+
+When candidates apply for a job, they answer the assigned questions and their responses are linked to their job application:
+
+- **Dynamic Form Generation**: Questions are rendered based on their type and configuration
+- **Answer Collection**: Structured collection of candidate responses
+- **Answer Validation**: Real-time validation for required questions
+- **Answer Storage**: All answers are stored and linked to the specific job application
+
+**Key Features:**
+- Progressive form completion with save draft functionality
+- Mobile-optimized question interfaces
+- Real-time validation and error handling
+- Answer review and management for recruiters
+
+#### Workflow Benefits
+
+- **Flexibility**: Each job can have a unique set of questions
+- **Reusability**: Questions can be reused across multiple jobs
+- **Scalability**: Easy to manage large question banks
+- **Consistency**: Standardized question format across all applications
+- **Analytics**: Collect structured data for better hiring decisions
+
+### Sequence Diagrams
+
+The following sequence diagrams illustrate the complete question workflow based on the integration test `completeQuestionWorkflow_ShouldWorkEndToEnd`:
+
+#### 1. Question Creation Workflow
+
+```mermaid
+sequenceDiagram
+    participant Admin as Company Admin
+    participant QuestionService as Question Service
+    participant QuestionRepo as Question Repository
+    participant DB as Database
+
+    Admin->>QuestionService: Create Question (QuestionSaveRequest)
+    QuestionService->>QuestionService: Validate Question Data
+    QuestionService->>QuestionRepo: Save Question
+    QuestionRepo->>DB: INSERT INTO question
+    DB-->>QuestionRepo: Question Created
+    QuestionRepo-->>QuestionService: Question Entity
+    QuestionService-->>Admin: Question Created Successfully
+
+    Note over Admin,DB: Repeat for multiple questions (5 in test)
+    Note over Admin,DB: Question Types: STRING, NUMBER, MULTIPLE_SELECTION, UNIQUE_SELECTION
 ```
 
-#### 5. Question Answer Collection
-```java
-@Entity
-public class QuestionAnswer {
-    private UUID id;
-    private String answerText;          // The candidate's answer
-    private Question question;          // The question being answered
-    private JobApplication jobApplication; // The application containing this answer
-}
+#### 2. Job Creation with Question Assignment
+
+```mermaid
+sequenceDiagram
+    participant Admin as Company Admin
+    participant JobService as Job Service
+    participant QuestionService as Question Service
+    participant JobQuestionService as Job Question Service
+    participant JobRepo as Job Repository
+    participant JobQuestionRepo as Job Question Repository
+    participant DB as Database
+
+    Admin->>JobService: Create Job with Question IDs
+    JobService->>JobService: Validate Job Data
+    JobService->>JobRepo: Save Job
+    JobRepo->>DB: INSERT INTO job
+    DB-->>JobRepo: Job Created
+    JobRepo-->>JobService: Job Entity
+
+    loop For each selected question
+        JobService->>QuestionService: Get Question by ID
+        QuestionService->>QuestionRepo: Find Question
+        QuestionRepo->>DB: SELECT FROM question
+        DB-->>QuestionRepo: Question Data
+        QuestionRepo-->>QuestionService: Question Entity
+        QuestionService-->>JobService: Question Entity
+        
+        JobService->>JobQuestionService: Create JobQuestion
+        JobQuestionService->>JobQuestionRepo: Save JobQuestion
+        JobQuestionRepo->>DB: INSERT INTO job_question
+        DB-->>JobQuestionRepo: JobQuestion Created
+        JobQuestionRepo-->>JobQuestionService: JobQuestion Entity
+        JobQuestionService-->>JobService: JobQuestion Created
+    end
+
+    JobService-->>Admin: Job Created with Assigned Questions
 ```
 
-### Complete Workflow Process
+#### 3. Candidate Application with Question Answers
 
-#### Phase 1: Question Management (Company Admin)
-1. **Question Creation**
-   - Company admin creates questions in the question bank
-   - Questions are categorized by type and marked as required/optional
-   - For MULTIPLE_SELECTION and UNIQUE_SELECTION types, options are created with order indices
-   - Questions are stored without order indices (ordering is handled at job level)
+```mermaid
+sequenceDiagram
+    participant Candidate as Job Candidate
+    participant JobApplicationService as Job Application Service
+    participant QuestionService as Question Service
+    participant JobApplicationRepo as Job Application Repository
+    participant QuestionAnswerRepo as Question Answer Repository
+    participant DB as Database
 
-2. **Question Bank Management**
-   - View all company questions
-   - Edit existing questions
-   - Activate/deactivate questions
-   - Reorder questions
+    Candidate->>JobApplicationService: Apply to Job with Question Answers
+    JobApplicationService->>JobApplicationService: Validate Application Data
+    JobApplicationService->>JobApplicationRepo: Save Job Application
+    JobApplicationRepo->>DB: INSERT INTO job_application
+    DB-->>JobApplicationRepo: Job Application Created
+    JobApplicationRepo-->>JobApplicationService: Job Application Entity
 
-#### Phase 2: Job Creation with Question Assignment
-1. **Job Creation Process**
-   - Admin creates a new featured job posting
-   - Selects relevant questions from the company question bank
-   - Assigns questions to the specific job (3 out of 10 available questions)
-   - Questions maintain their order within the job context
+    loop For each question answer
+        JobApplicationService->>QuestionService: Validate Question Answer
+        QuestionService->>QuestionService: Check Question Type & Requirements
+        QuestionService-->>JobApplicationService: Validation Result
+        
+        JobApplicationService->>QuestionAnswerRepo: Save Question Answer
+        QuestionAnswerRepo->>DB: INSERT INTO question_answer
+        DB-->>QuestionAnswerRepo: Question Answer Created
+        QuestionAnswerRepo-->>JobApplicationService: Question Answer Entity
+    end
 
-2. **Question Selection Interface**
-   - Display available questions by category
-   - Allow drag-and-drop reordering
-   - Preview question appearance to candidates
-   - Validate required questions are included
+    JobApplicationService-->>Candidate: Application Submitted Successfully
+```
 
-#### Phase 3: Candidate Application Process
-1. **Application Form Display**
-   - Show standard job application fields
-   - Display assigned questions in order
-   - Different input types based on question type
-   - Real-time validation for required fields
+#### 4. Complete End-to-End Workflow
 
-2. **Answer Collection**
-   - Collect answers in structured format
-   - Validate answers against question requirements
-   - Save answers linked to the job application
+```mermaid
+sequenceDiagram
+    participant Admin as Company Admin
+    participant Candidate as Job Candidate
+    participant System as Question System
+    participant DB as Database
 
-#### Phase 4: Answer Review and Management
-1. **Application Review**
-   - Display candidate answers alongside application details
-   - Sort and filter applications by question responses
-   - Export answers for analysis
+    Note over Admin,DB: Phase 1: Question Creation
+    Admin->>System: Create 5 Questions (Different Types)
+    System->>DB: Store Questions
+    DB-->>System: Questions Stored
+    System-->>Admin: Questions Created
 
-2. **Analytics and Reporting**
-   - Aggregate answer statistics
-   - Identify common response patterns
-   - Generate reports for hiring decisions
+    Note over Admin,DB: Phase 2: Job Creation & Question Assignment
+    Admin->>System: Create Job & Assign 3 Questions
+    System->>DB: Store Job & JobQuestion Relations
+    DB-->>System: Job & Relations Stored
+    System-->>Admin: Job Created with Questions
+
+    Note over Candidate,DB: Phase 3: Candidate Application
+    Candidate->>System: Apply to Job with Answers
+    System->>System: Validate Question Answers
+    System->>DB: Store JobApplication & QuestionAnswers
+    DB-->>System: Application & Answers Stored
+    System-->>Candidate: Application Submitted
+
+    Note over Admin,DB: Phase 4: Review & Management
+    Admin->>System: Review Applications & Answers
+    System->>DB: Retrieve Application Data
+    DB-->>System: Application & Question Data
+    System-->>Admin: Complete Application Review
+```
+
+#### 5. Data Flow Architecture
+
+```mermaid
+sequenceDiagram
+    participant UI as Frontend UI
+    participant API as REST API
+    participant Service as Service Layer
+    participant Repo as Repository Layer
+    participant DB as PostgreSQL Database
+
+    UI->>API: HTTP Request (Question/Job/Application)
+    API->>Service: Business Logic Processing
+    Service->>Repo: Data Access Operations
+    Repo->>DB: SQL Queries
+    DB-->>Repo: Query Results
+    Repo-->>Service: Entity Objects
+    Service-->>API: Processed Data
+    API-->>UI: JSON Response
+
+    Note over UI,DB: All operations follow this pattern
+    Note over UI,DB: Authentication & Authorization handled at API layer
+    Note over UI,DB: Business validation in Service layer
+    Note over UI,DB: Data persistence in Repository layer
+```
 
 ---
 
 ## Backend Architecture
-
-### Service Layer Architecture
-
-#### 1. QuestionService
-```java
-@Service
-public class QuestionService {
-    // CRUD operations for questions
-    public Question saveQuestion(QuestionSaveRequest request);
-    public Question updateQuestion(UUID id, QuestionSaveRequest request);
-    public void deleteQuestion(UUID id);
-    public List<Question> getQuestionsByCompany(UUID companyId);
-    public List<Question> reorderQuestions(List<UUID> questionIds);
-    
-    // Answer management
-    public void saveQuestionAnswers(JobApplication jobApplication, 
-                                   List<QuestionAnswerRequest> answers);
-    public List<QuestionAnswer> getAnswersByApplication(UUID jobApplicationId);
-}
-```
-
-#### 2. JobQuestionService
-```java
-@Service
-public class JobQuestionService {
-    // Job-question assignment
-    public void assignQuestionsToJob(UUID jobId, List<UUID> questionIds);
-    public void removeQuestionFromJob(UUID jobId, UUID questionId);
-    public List<Question> getActiveQuestionsByJob(UUID jobId);
-    public void reorderQuestionsInJob(UUID jobId, List<UUID> questionIds);
-}
-```
-
-#### 3. JobApplicationService Integration
-```java
-@Service
-public class JobApplicationService {
-    @Transactional
-    public JobApplication applyToJob(UUID jobId, 
-                                   String applyToFeatureJobRequest, 
-                                   MultipartFile file) {
-        // ... standard application logic ...
-        
-        // Save questionnaire answers if provided
-        if (request.getQuestionAnswers() != null && !request.getQuestionAnswers().isEmpty()) {
-            validateAndSaveQuestionAnswers(finalSavedJobApplication, 
-                                         request.getQuestionAnswers(), 
-                                         savedJob);
-            finalSavedJobApplication = jobApplicationRepository.saveAndFlush(finalSavedJobApplication);
-        }
-        
-        return finalSavedJobApplication;
-    }
-}
-```
 
 ### API Endpoints
 
@@ -362,471 +359,8 @@ GET    /api/applications/{id}/answers    # Get answers for application
 
 ---
 
-## UI/UX Design Recommendations
-
-### Design Principles
-
-#### 1. Progressive Disclosure
-- Show questions in logical groups
-- Use collapsible sections for long questionnaires
-- Provide progress indicators for multi-step processes
-
-#### 2. Contextual Help
-- Tooltips explaining question types
-- Examples for complex questions
-- Validation messages with clear guidance
-
-#### 3. Responsive Design
-- Mobile-first approach for candidate applications
-- Desktop-optimized for admin management
-- Touch-friendly interfaces for mobile devices
-
-#### 4. Accessibility
-- WCAG 2.1 AA compliance
-- Screen reader support
-- Keyboard navigation
-- High contrast mode support
-
-### User Experience Flow
-
-#### For Company Admins
-1. **Question Bank Management**
-   - Intuitive question creation wizard
-   - Drag-and-drop reordering
-   - Bulk operations for efficiency
-
-2. **Job Creation Integration**
-   - Seamless question selection during job posting
-   - Preview mode to see candidate experience
-   - Quick templates for common question sets
-
-#### For Candidates
-1. **Application Experience**
-   - Clear progress indication
-   - Save draft functionality
-   - Mobile-optimized input fields
-
-2. **Question Presentation**
-   - Clean, distraction-free interface
-   - Logical grouping of related questions
-   - Helpful hints and examples
-
----
 
 ## React Component Mockups
-
-### Visual UI Mockups
-
-#### 1. Question Bank Dashboard - Visual Layout
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 🏢 JobPosting Platform                                    👤 Admin User ▼ │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 📊 Dashboard > 📝 Question Bank                                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Question Bank                                    [+ Create New Question]   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔍 Search questions...  [Filter ▼] [Type ▼] [Status ▼] [Sort ▼]   │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 📝 What is your experience with Java and Spring Boot?              │   │
-│  │ 📋 STRING • Required • Active • Order: 1                          │   │
-│  │ [✏️ Edit] [🗑️ Delete] [👁️ Preview]                               │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔢 How many years of experience do you have?                       │   │
-│  │ 📋 NUMBER • Required • Active • Order: 2                          │   │
-│  │ [✏️ Edit] [🗑️ Delete] [👁️ Preview]                               │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ ☑️ Which technologies are you familiar with? (Select all that apply)│   │
-│  │ 📋 MULTIPLE_SELECTION • Optional • Active • Order: 3              │   │
-│  │ [✏️ Edit] [🗑️ Delete] [👁️ Preview]                               │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔘 What is your preferred work arrangement?                        │   │
-│  │ 📋 UNIQUE_SELECTION • Required • Active • Order: 4                │   │
-│  │ [✏️ Edit] [🗑️ Delete] [👁️ Preview]                               │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  [← Previous] [1] [2] [3] [Next →]                                        │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### 2. Question Creation Form - Visual Layout
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ✏️ Create New Question                                                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Question Text *                                                            │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ What is your experience with Java and Spring Boot?                 │   │
-│  │                                                                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  Question Type *                                                            │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐         │
-│  │ 📝 Text     │ │ 🔢 Number   │ │ ☑️ Multiple │ │ 🔘 Single   │         │
-│  │ Answer      │ │             │ │ Choice      │ │ Choice      │         │
-│  │ ✓ Selected  │ │             │ │             │ │             │         │
-│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘         │
-│                                                                             │
-│  Answer Options (for Multiple/Single Choice)                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ Option 1: [Enter option text...]                            [🗑️]   │   │
-│  │ Option 2: [Enter option text...]                            [🗑️]   │   │
-│  │ Option 3: [Enter option text...]                            [🗑️]   │   │
-│  │                                                                     │   │
-│  │ [+ Add Option]                                                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ☑️ Required Question                                                       │
-│  ☑️ Active                                                                  │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                              [Cancel] [Create Question]             │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### 3. Job Creation with Question Assignment - Visual Layout
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 🏢 JobPosting Platform > 📝 Create Featured Job                            │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Job Details                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ Job Title: [Senior Java Developer                    ]              │   │
-│  │ Description: [We are looking for an experienced...]                 │   │
-│  │ Category: [Technology ▼] Location: [Remote ▼]                      │   │
-│  │ Min Salary: [$70,000] Max Salary: [$100,000]                       │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  Application Questions                                                      │
-│  Select questions from your question bank to include in this job application│
-│                                                                             │
-│  ┌───────────────────────────────┐ ┌─────────────────────────────────────┐ │
-│  │ Available Questions           │ │ Selected Questions (3)              │ │
-│  │                               │ │                                     │ │
-│  │ 🔍 Search... [Filter ▼]      │ │ ┌─────────────────────────────────┐ │ │
-│  │                               │ │ │ 1. What is your experience...  │ │ │
-│  │ ┌─────────────────────────┐   │ │ │ [📝 STRING] [↕️] [🗑️]        │ │ │
-│  │ │ 📝 Java Experience      │   │ │ └─────────────────────────────────┘ │ │
-│  │ │ [Add →]                │   │ │                                     │ │
-│  │ └─────────────────────────┘   │ │ ┌─────────────────────────────────┐ │ │
-│  │                               │ │ │ 2. Years of experience?         │ │ │
-│  │ ┌─────────────────────────┐   │ │ │ [🔢 NUMBER] [↕️] [🗑️]         │ │ │
-│  │ │ 🔢 Years Experience     │   │ │ └─────────────────────────────────┘ │ │
-│  │ │ [Add →]                │   │ │                                     │ │
-│  │ └─────────────────────────┘   │ │ ┌─────────────────────────────────┐ │ │
-│  │                               │ │ │ 3. Which technologies?          │ │ │
-│  │ ┌─────────────────────────┐   │ │ │ [☑️ MULTIPLE] [↕️] [🗑️]       │ │ │
-│  │ │ ☑️ Technologies         │   │ │ └─────────────────────────────────┘ │ │
-│  │ │ [Add →]                │   │ │                                     │ │
-│  │ └─────────────────────────┘   │ │                                     │ │
-│  └───────────────────────────────┘ └─────────────────────────────────────┘ │
-│                                                                             │
-│  Preview                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 📝 What is your experience with Java and Spring Boot?              │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ [Text area for candidate answer...]                            │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  │                                                                     │   │
-│  │ 🔢 How many years of experience do you have?                       │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ [Number input field...]                                        │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  [Save Draft] [Publish Job]                                                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### 4. Candidate Application Form - Visual Layout
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 🏢 JobPosting Platform > 💼 Apply to Job                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Senior Java Developer                                                      │
-│  TechCorp Inc. • Remote • $70,000 - $100,000                               │
-│                                                                             │
-│  ████████████████████████████████████████████████████████████████ 75%      │
-│  Step 1 ✓  Step 2 ✓  Step 3 ●  Step 4 ○                                   │
-│                                                                             │
-│  Application Questions                                                      │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 📝 What is your experience with Java and Spring Boot? *             │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ I have 5 years of experience working with Java and Spring...   │ │   │
-│  │ │                                                               │ │   │
-│  │ │                                                               │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔢 How many years of experience do you have? *                      │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ [5                    ] years                                  │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ ☑️ Which technologies are you familiar with?                        │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ ☑️ Java                                                         │ │   │
-│  │ │ ☑️ Spring Boot                                                  │ │   │
-│  │ │ ☐ React                                                         │ │   │
-│  │ │ ☐ Node.js                                                       │ │   │
-│  │ │ ☑️ PostgreSQL                                                   │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔘 What is your preferred work arrangement? *                       │   │
-│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │ │ 🔘 Remote                                                       │ │   │
-│  │ │ ⚪ Hybrid                                                        │ │   │
-│  │ │ ⚪ On-site                                                       │ │   │
-│  │ └─────────────────────────────────────────────────────────────────┘ │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  [← Back] [Save Draft] [Next →]                                            │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### 5. Application Review Dashboard - Visual Layout
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 🏢 JobPosting Platform > 📊 Applications                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Applications for Senior Java Developer                                     │
-│  📊 47 Total Applications • 🔵 12 New • 🟡 8 In Review • 🟢 5 Approved    │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ 🔍 Filter: [All Status ▼] [All Questions ▼] [Date Range ▼]         │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌───────────────────────────────┐ ┌─────────────────────────────────────┐ │
-│  │ Applications List             │ │ Application Details                 │ │
-│  │                               │ │                                     │ │
-│  │ ┌─────────────────────────┐   │ │ John Doe                            │ │
-│  │ │ 👤 John Doe            │   │ │ john.doe@email.com                  │ │
-│  │ │ 📧 john.doe@email.com  │   │ │ +1 (555) 123-4567                   │ │
-│  │ │ 📅 Applied 2 days ago  │   │ │                                     │ │
-│  │ │ 🟢 Status: New         │   │ │ Application Questions:              │ │
-│  │ │ [View Details →]       │   │ │                                     │ │
-│  │ └─────────────────────────┘   │ │ 📝 Java Experience:                 │ │
-│  │                               │ │ "I have 5 years of experience..."  │ │
-│  │ ┌─────────────────────────┐   │ │                                     │ │
-│  │ │ 👤 Jane Smith          │   │ │ 🔢 Years of Experience:             │ │
-│  │ │ 📧 jane@email.com      │   │ │ 5 years                             │ │
-│  │ │ 📅 Applied 1 day ago   │   │ │                                     │ │
-│  │ │ 🟡 Status: In Review   │   │ │ ☑️ Technologies:                    │ │
-│  │ │ [View Details →]       │   │ │ Java, Spring Boot, PostgreSQL      │ │
-│  │ └─────────────────────────┘   │ │                                     │ │
-│  │                               │ │ 🔘 Work Arrangement:               │ │
-│  │ ┌─────────────────────────┐   │ │ Remote                             │ │
-│  │ │ 👤 Bob Johnson         │   │ │                                     │ │
-│  │ │ 📧 bob@email.com       │   │ │ [Approve] [Reject] [Request Info]   │ │
-│  │ │ 📅 Applied 3 hours ago │   │ │                                     │ │
-│  │ │ 🟢 Status: New         │   │ │                                     │ │
-│  │ │ [View Details →]       │   │ │                                     │ │
-│  │ └─────────────────────────┘   │ │                                     │ │
-│  └───────────────────────────────┘ └─────────────────────────────────────┘ │
-│                                                                             │
-│  [← Previous] [1] [2] [3] [4] [Next →]                                     │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### 6. Mobile Application Form - Visual Layout
-```
-┌─────────────────────────────────────┐
-│ 🏢 JobPosting              👤 Menu │
-├─────────────────────────────────────┤
-│                                     │
-│ Senior Java Developer               │
-│ TechCorp Inc.                       │
-│ Remote • $70k-$100k                 │
-│                                     │
-│ ████████████████ 75%                │
-│ Step 3 of 4                         │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 📝 Java Experience *           │ │
-│ │ ┌─────────────────────────────┐ │ │
-│ │ │ I have 5 years of exp...   │ │ │
-│ │ │                             │ │ │
-│ │ └─────────────────────────────┘ │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 🔢 Years Experience *          │ │
-│ │ ┌─────────────────────────────┐ │ │
-│ │ │ [5        ] years           │ │ │
-│ │ └─────────────────────────────┘ │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ ☑️ Technologies                │ │
-│ │ ┌─────────────────────────────┐ │ │
-│ │ │ ☑️ Java                     │ │ │
-│ │ │ ☑️ Spring Boot              │ │ │
-│ │ │ ☐ React                     │ │ │
-│ │ │ ☑️ PostgreSQL               │ │ │
-│ │ └─────────────────────────────┘ │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 🔘 Work Arrangement *          │ │
-│ │ ┌─────────────────────────────┐ │ │
-│ │ │ 🔘 Remote                   │ │
-│ │ │ ⚪ Hybrid                    │ │
-│ │ │ ⚪ On-site                   │ │
-│ │ └─────────────────────────────┘ │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ [← Back]    [Save]    [Next →]     │
-└─────────────────────────────────────┘
-```
-
-#### 7. Mobile Question Bank - Visual Layout
-```
-┌─────────────────────────────────────┐
-│ 📝 Question Bank            🔍 + ➕ │
-├─────────────────────────────────────┤
-│                                     │
-│ [All ▼] [Active ▼] [Type ▼]        │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 📝 Java Experience             │ │
-│ │ STRING • Required • Active     │ │
-│ │ [✏️] [🗑️] [👁️]                │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 🔢 Years Experience            │ │
-│ │ NUMBER • Required • Active     │ │
-│ │ [✏️] [🗑️] [👁️]                │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ ☑️ Technologies                │ │
-│ │ MULTIPLE • Optional • Active   │ │
-│ │ [✏️] [🗑️] [👁️]                │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ┌─────────────────────────────────┐ │
-│ │ 🔘 Work Arrangement            │ │
-│ │ UNIQUE • Required • Active     │ │
-│ │ [✏️] [🗑️] [👁️]                │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ [←] [1] [2] [3] [→]                │
-└─────────────────────────────────────┘
-```
-
-### Color Scheme and Visual Design Guidelines
-
-#### Primary Colors
-```
-🎨 Brand Colors:
-- Primary Blue: #2563eb (Buttons, Links, Active States)
-- Secondary Gray: #6b7280 (Text, Borders, Secondary Elements)
-- Success Green: #10b981 (Success States, Approved Status)
-- Warning Yellow: #f59e0b (Pending, In Review)
-- Error Red: #ef4444 (Errors, Rejected Status)
-- Background: #f9fafb (Light Gray Background)
-```
-
-#### Typography
-```
-📝 Font Hierarchy:
-- Headers: Inter Bold, 24px-32px
-- Subheaders: Inter Semibold, 18px-20px
-- Body Text: Inter Regular, 14px-16px
-- Small Text: Inter Regular, 12px-14px
-- Monospace: JetBrains Mono, 14px (Code, Numbers)
-```
-
-#### Component Styling
-```
-🔧 UI Components:
-- Border Radius: 8px (Cards, Buttons)
-- Shadows: 0 1px 3px rgba(0,0,0,0.1) (Cards)
-- Spacing: 16px grid system
-- Icons: Heroicons or Lucide React
-- Loading States: Skeleton loaders
-```
-
-### Interactive Elements
-
-#### Hover States
-```
-🖱️ Interactive Feedback:
-- Buttons: Scale 1.02, Shadow increase
-- Cards: Subtle shadow increase, border color change
-- Links: Color transition, underline animation
-- Form Fields: Border color change, focus ring
-```
-
-#### Loading States
-```
-⏳ Loading Indicators:
-- Skeleton loaders for question lists
-- Progress bars for form steps
-- Spinner for API calls
-- Shimmer effect for data loading
-```
-
-#### Error States
-```
-❌ Error Handling:
-- Inline validation messages
-- Form field error styling (red border)
-- Toast notifications for API errors
-- Error boundaries for component crashes
-```
-
-### Accessibility Features
-
-#### Screen Reader Support
-```
-♿ Accessibility:
-- ARIA labels for all interactive elements
-- Semantic HTML structure (nav, main, section)
-- Alt text for all images and icons
-- Focus management for modals and forms
-```
-
-#### Keyboard Navigation
-```
-⌨️ Keyboard Support:
-- Tab order follows logical flow
-- Escape key closes modals
-- Enter/Space activates buttons
-- Arrow keys navigate question options
-```
-
-#### Visual Accessibility
-```
-👁️ Visual Support:
-- High contrast mode support
-- Focus indicators (2px blue outline)
-- Color-blind friendly palette
-- Minimum 44px touch targets
-```
 
 ### 1. Question Management Dashboard
 
@@ -1305,7 +839,7 @@ Authorization: Bearer <your-jwt-token>
 
 ### Base URL
 ```
-https://api.jobposting.com/api/v1
+https://api-dev.itjobopportunities.io/
 ```
 
 ---
